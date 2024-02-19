@@ -7,8 +7,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : Subject
 {
+#region Private Fields    
     PlayerControl _inputs;
     Vector2 _move;
+    Camera _camera;
+    Vector3 _camForward, _camRight;
+#endregion    
+
+#region Serialize Fields
 
     [SerializeField] float _speed;
 
@@ -29,11 +35,13 @@ public class PlayerController : Subject
     [Header("Respawn Transform")]
 
     [SerializeField] Transform _respawn;
+#endregion
 
     public object Player { get; internal set; }
 
     void Awake()
     {
+        _camera = Camera.main;
         _controller = GetComponent<CharacterController>();
         _inputs = new PlayerControl();
         _inputs.Player.Move.performed += context => _move = context.ReadValue<Vector2>();
@@ -55,7 +63,13 @@ void FixedUpdate()
     {
         _velocity.y = -2.0f;
     }
-    Vector3 movement = new Vector3(_move.x, 0.0f, _move.y) * _speed * Time.fixedDeltaTime;
+    _camForward = _camera.transform.forward;
+    _camRight = _camera.transform.right;
+    _camForward.y = 0.0f;
+    _camRight.y = 0.0f;
+    _camForward.Normalize();
+    _camRight.Normalize();
+    Vector3 movement = (_camRight * _move.x + _camForward * _move.y) * _speed * Time.fixedDeltaTime;
      if (!_controller.enabled) {return;}
     _controller.Move(movement);
     _velocity.y += _gravity * Time.fixedDeltaTime;
