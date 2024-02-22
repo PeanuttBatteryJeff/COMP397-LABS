@@ -2,27 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class AudioData
-{
-    public string audioName;
-    public AudioClip audioClip;
-}
-
+// This component is scene dependent. It will hold the references for AudioAsset per scene
+// Call AudioController to play audios.
 public class AudioManager : MonoBehaviour, IObserver
 {
     [SerializeField] private Subject _player;
-    [SerializeField] private List<AudioData> _audios = new List<AudioData>();
-    [SerializeField] private AudioSource _sfxSource;
+    [SerializeField] private List<AudioAsset> _audios = new List<AudioAsset>();
+    [SerializeField] private string _sceneMusicName;
 
     void Awake()
     {
-        _player = GameObject.FindGameObjectWithTag("Player").
-            GetComponent<Subject>();
+        var playerGO = GameObject.FindGameObjectWithTag("Player");
+        if (playerGO == null) { return; }
+        _player = playerGO.GetComponent<Subject>();
     }
 
-    void OnEnable() => _player.AddObserver(this);
-    void OnDisable() => _player.RemoveObserver(this);
+    void Start()
+    {
+        var musicAsset = _audios.Find(a => a.AudioName == _sceneMusicName);
+        AudioController.Instance.PlayMusic(musicAsset);
+    }
+
+    void OnEnable() 
+    {
+        if (_player == null) { return ;}
+        _player.AddObserver(this);
+    } 
+    void OnDisable() 
+    {
+        if (_player == null) { return; }
+        _player.RemoveObserver(this);
+    }     
     public void OnNotify(PlayerEnums playerEnums)
     {
         switch (playerEnums)
@@ -40,9 +50,8 @@ public class AudioManager : MonoBehaviour, IObserver
 
     private void PlayAudioClip(string audioName)
     {
-        var clip = _audios.Find(audio => 
-                            audio.audioName == audioName).
-                            audioClip;
-        _sfxSource.PlayOneShot(clip);                        
+        var audioAsset = _audios.Find(asset => asset.AudioName == audioName);
+        AudioController.Instance.PlaySFX(audioAsset);
+                      
     }
 }

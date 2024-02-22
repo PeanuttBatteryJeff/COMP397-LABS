@@ -44,6 +44,6 @@ public class PlayerStatsSystem : MonoBehaviour, IObserver
     {}
     public void SaveGame()
     {
-        // SaveGameManager.Instance().SaveGame(_player.transform);
+        SaveGameManager.Instance().SaveGame(_player.transform);
     }
 }

@@ -13,7 +13,7 @@ public class SaveGameManager
 {
     private static SaveGameManager _instance = null;
     private SaveGameManager(){}
-    private static SaveGameManager Instance()
+    public static SaveGameManager Instance()
     {
         return _instance ??= new SaveGameManager();
     }
