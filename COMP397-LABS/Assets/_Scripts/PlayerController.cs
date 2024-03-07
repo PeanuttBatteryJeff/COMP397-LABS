@@ -18,6 +18,8 @@ public class PlayerController : Subject
 
     [SerializeField] float _speed;
 
+    [Header("Joystick")]
+    [SerializeField] Joystick _joystick;
     [Header("Character Controller")]
     [SerializeField] CharacterController _controller;
 
@@ -63,6 +65,7 @@ void FixedUpdate()
     {
         _velocity.y = -2.0f;
     }
+    _move = _joystick.Direction;
     _camForward = _camera.transform.forward;
     _camRight = _camera.transform.right;
     _camForward.y = 0.0f;
