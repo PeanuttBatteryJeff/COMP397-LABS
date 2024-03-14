@@ -102,20 +102,15 @@ void Jump()
     {
         if (other.CompareTag ("deathZone"))
         {
-            _controller.enabled = false;
-            transform.position = _respawn.position;
-            _controller.enabled = true;
+            MovePlayerPosition(_respawn.position);
             NotifyObservers(PlayerEnums.Died);
         }
     }
 
-    internal void Enabled()
+    public void MovePlayerPosition(Vector3 pos)
     {
-        throw new NotImplementedException();
-    }
-
-    internal void Disable()
-    {
-        throw new NotImplementedException();
+        _controller.enabled = false;
+        transform.position = pos;
+        _controller.enabled = true;
     }
 }
